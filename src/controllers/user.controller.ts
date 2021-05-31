@@ -1,5 +1,5 @@
-import db from 'models';
-import IController from 'types/IController';
+import db from '../models';
+import IController from '../types/IController';
 
 const getAllUsers: IController = async (req, res) => {
   try {
