@@ -12,8 +12,4 @@ function startServer() {
     .catch(console.log);
 }
 
-const message = 'test';
-
-console.log(message);
-
 startServer();
