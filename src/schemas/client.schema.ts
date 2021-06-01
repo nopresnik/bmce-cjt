@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-import Client from 'types/IClient';
+import Client from '../types/IClient';
 import addressSchema from './address.schema';
 
 export default new Schema<Client>({
