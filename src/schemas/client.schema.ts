@@ -5,7 +5,7 @@ import addressSchema from './address.schema';
 export default new Schema<Client>(
   {
     name: { type: String, required: true },
-    address: { type: addressSchema, required: true },
+    address: { type: addressSchema },
     email: { type: String },
     mobile: { type: String },
     phone: { type: String },
