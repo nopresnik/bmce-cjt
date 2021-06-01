@@ -15,7 +15,7 @@ const schema = new Schema<Job>(
     notes: { type: String },
     previousRefs: { type: [Number] },
     pricing: { type: [priceSchema] },
-    status: { type: JobStatus, default: JobStatus.Active },
+    status: { type: String, enum: Object.values(JobStatus), default: JobStatus.Active },
     dateCompleted: { type: Date },
     invoiced: { type: Boolean, default: false },
     invoicePaid: { type: Boolean, default: false },
