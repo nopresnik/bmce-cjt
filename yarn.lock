@@ -170,6 +170,11 @@
     "@types/bson" "*"
     "@types/node" "*"
 
+"@types/mongoose-sequence@^3.0.4":
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/@types/mongoose-sequence/-/mongoose-sequence-3.0.4.tgz#dce94e418dc00b5854b1d23073f003d5b7942990"
+  integrity sha512-5zIwgVa6EQRBoztZs8gtnrrnquw2aI9LlatpQKAAw5qMFOD8+yUo+LkCyId5ZM3lurEKHh1pJQ7YUPfe+jTqxQ==
+
 "@types/node@*", "@types/node@^15.6.1":
   version "15.6.1"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-15.6.1.tgz#32d43390d5c62c5b6ec486a9bc9c59544de39a08"
