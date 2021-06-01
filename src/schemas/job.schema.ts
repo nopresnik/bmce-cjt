@@ -6,7 +6,7 @@ import addressSchema from './address.schema';
 const schema = new Schema<Job>(
   {
     jobID: { type: Number, unique: true },
-    name: { type: String, required: true },
+    client: { type: Schema.Types.ObjectId, ref: 'Client', required: true },
     location: { type: addressSchema, required: true },
   },
   { timestamps: true },

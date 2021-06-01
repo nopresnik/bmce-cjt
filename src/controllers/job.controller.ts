@@ -5,7 +5,7 @@ import ApiResponse from '../utilities/apiResponse';
 
 const getAllJobs: IController = async (req, res) => {
   try {
-    const jobs = await db.Job.find({});
+    const jobs = await db.Job.find({}).populate('client');
     ApiResponse.result(res, jobs);
   } catch (e) {
     ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);

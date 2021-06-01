@@ -1,7 +1,8 @@
+import { Schema } from 'mongoose';
 import Address from './IAddress';
 
 export default interface Job {
   jobID: number;
-  name: string;
+  client: Schema.Types.ObjectId;
   location: Address;
 }
