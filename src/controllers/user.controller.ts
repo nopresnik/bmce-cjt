@@ -8,7 +8,7 @@ const getAllUsers: IController = async (req, res) => {
     const users = await db.User.find({});
     ApiResponse.result(res, users);
   } catch (e) {
-    res.json(e);
+    ApiResponse.error(res, code.BAD_REQUEST, e);
   }
 };
 
