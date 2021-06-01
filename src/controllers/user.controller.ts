@@ -1,6 +1,7 @@
 import ApiResponse from '../utilities/apiResponse';
 import db from '../models';
 import IController from '../types/IController';
+import code from 'http-status-codes';
 
 const getAllUsers: IController = async (req, res) => {
   try {
@@ -16,7 +17,7 @@ const createUser: IController = async (req, res) => {
     const user = await db.User.create(req.body);
     ApiResponse.result(res, user);
   } catch (e) {
-    res.json(e);
+    ApiResponse.error(res, code.BAD_REQUEST, e);
   }
 };
 
