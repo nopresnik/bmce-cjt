@@ -1,6 +1,6 @@
 import db from '../models';
 
-const getNextJobID = async (): Promise<number> => {
+const getNextJobID = (): Promise<number> => {
   return new Promise((resolve, reject) => {
     db.Job.find()
       .limit(1)
