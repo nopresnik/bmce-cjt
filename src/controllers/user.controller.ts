@@ -11,4 +11,13 @@ const getAllUsers: IController = async (req, res) => {
   }
 };
 
-export default { getAllUsers };
+const createUser: IController = async (req, res) => {
+  try {
+    const user = await db.User.create(req.body);
+    ApiResponse.result(res, user);
+  } catch (e) {
+    res.json(e);
+  }
+};
+
+export default { getAllUsers, createUser };
