@@ -3,8 +3,10 @@ import controller from '../controllers/job.controller';
 
 const router = Router();
 
+router.post('/', controller.createJob);
+
 router.get('/', controller.getAllJobs);
 
-router.post('/', controller.createJob);
+router.get('/:jobID', controller.getJobById);
 
 export default router;
