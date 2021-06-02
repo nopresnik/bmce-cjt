@@ -37,7 +37,7 @@ const getJobById: IController = async (req, res) => {
 const patchJob: IController = async (req, res) => {
   const jobID = parseInt(req.params.jobID);
   try {
-    const job = await db.Job.findOneAndUpdate({ jobID }, req.body, { new: true });
+    const job = await db.Job.findOneAndUpdate({ jobID }, req.body, { new: true, runValidators: true });
     return ApiResponse.result(res, job);
   } catch (e) {
     ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);

@@ -37,7 +37,7 @@ const getClientByID: IController = async (req, res) => {
 const patchClient: IController = async (req, res) => {
   const _id = req.params.clientID;
   try {
-    const client = await db.Client.findOneAndUpdate({ _id }, req.body, { new: true });
+    const client = await db.Client.findOneAndUpdate({ _id }, req.body, { new: true, runValidators: true });
     return ApiResponse.result(res, client);
   } catch (e) {
     return ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
