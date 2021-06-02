@@ -21,6 +21,19 @@ const getAllClients: IController = async (req, res) => {
   }
 };
 
+const getClientByID: IController = async (req, res) => {
+  const _id = req.params.clientID;
+  try {
+    const client = await db.Client.findOne({ _id });
+    if (client) {
+      return ApiResponse.result(res, client);
+    }
+    return ApiResponse.error(res, code.NOT_FOUND);
+  } catch (e) {
+    ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
+  }
+};
+
 const patchClient: IController = async (req, res) => {
   const _id = req.params.clientID;
   try {
@@ -41,4 +54,4 @@ const deleteClient: IController = async (req, res) => {
   }
 };
 
-export default { createClient, getAllClients, patchClient, deleteClient };
+export default { createClient, getAllClients, getClientByID, patchClient, deleteClient };
