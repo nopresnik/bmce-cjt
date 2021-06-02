@@ -44,4 +44,14 @@ const patchJob: IController = async (req, res) => {
   }
 };
 
-export default { createJob, getAllJobs, getJobById, patchJob };
+const deleteJob: IController = async (req, res) => {
+  const jobID = parseInt(req.params.jobID);
+  try {
+    const job = await db.Job.findOneAndUpdate({ jobID }, { deleted: true });
+    ApiResponse.result(res, job);
+  } catch (e) {
+    ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
+  }
+};
+
+export default { createJob, getAllJobs, getJobById, patchJob, deleteJob };

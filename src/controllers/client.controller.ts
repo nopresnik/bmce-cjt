@@ -31,4 +31,14 @@ const patchClient: IController = async (req, res) => {
   }
 };
 
-export default { createClient, getAllClients, patchClient };
+const deleteClient: IController = async (req, res) => {
+  const _id = req.params.clientID;
+  try {
+    const client = await db.Client.findOneAndUpdate({ _id }, { deleted: true });
+    return ApiResponse.result(res, client);
+  } catch (e) {
+    return ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
+  }
+};
+
+export default { createClient, getAllClients, patchClient, deleteClient };

@@ -11,4 +11,6 @@ router.get('/:jobID', controller.getJobById);
 
 router.patch('/:jobID', controller.patchJob);
 
+router.delete('/:jobID', controller.deleteJob);
+
 export default router;
