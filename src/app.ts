@@ -2,7 +2,7 @@ import makeConnection from './models/connection';
 import createServer from './server';
 
 function startServer() {
-  const port: number = parseInt(<string>process.env.PORT, 10) || 3000;
+  const port: number = parseInt(<string>process.env.PORT, 10) || 5000;
   const app = createServer();
 
   makeConnection()
