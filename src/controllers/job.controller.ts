@@ -34,7 +34,7 @@ const getJobById: IController = async (req, res) => {
   }
 };
 
-const updateJob: IController = async (req, res) => {
+const patchJob: IController = async (req, res) => {
   const jobID = parseInt(req.params.jobID);
   try {
     const job = await db.Job.findOneAndUpdate({ jobID }, req.body, { new: true });
@@ -44,4 +44,4 @@ const updateJob: IController = async (req, res) => {
   }
 };
 
-export default { createJob, getAllJobs, getJobById, updateJob };
+export default { createJob, getAllJobs, getJobById, patchJob };

@@ -9,6 +9,6 @@ router.get('/', controller.getAllJobs);
 
 router.get('/:jobID', controller.getJobById);
 
-router.patch('/:jobID', controller.updateJob);
+router.patch('/:jobID', controller.patchJob);
 
 export default router;
