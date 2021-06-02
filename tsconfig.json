@@ -1,15 +1,16 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
     "target": "es5",
     "module": "commonjs",
+    "outDir": "./dist",
+    "rootDirs": ["./src", "./test"],
     "strict": true,
+    "moduleResolution": "node",
+    "baseUrl": "./src",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "rootDirs": ["./src", "./test"],
-    "moduleResolution": "node"
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["./src/**/*.ts"],
-  "exclude": ["./dist", "./node_modules"]
+  "exclude": ["./dist", "./node_modules", "./test"]
 }
