@@ -18,4 +18,5 @@ export default interface Job {
   invoicePaid: boolean;
   purchaseOrder: string;
   completedBy: string;
+  deleted: boolean;
 }

@@ -21,6 +21,7 @@ const schema = new Schema<Job>(
     invoicePaid: { type: Boolean, default: false },
     purchaseOrder: { type: String },
     completedBy: { type: String },
+    deleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
