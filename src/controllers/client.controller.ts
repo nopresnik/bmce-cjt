@@ -47,7 +47,7 @@ const patchClient: IController = async (req, res) => {
 const deleteClient: IController = async (req, res) => {
   const _id = req.params.clientID;
   try {
-    const client = await db.Client.findOneAndUpdate({ _id }, { deleted: true });
+    const client = await db.Client.findOneAndUpdate({ _id }, { deleted: true }, { new: true });
     return ApiResponse.result(res, client);
   } catch (e) {
     return ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
