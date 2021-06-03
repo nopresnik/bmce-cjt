@@ -47,7 +47,7 @@ const patchJob: IController = async (req, res) => {
 const deleteJob: IController = async (req, res) => {
   const jobID = parseInt(req.params.jobID);
   try {
-    const job = await db.Job.findOneAndUpdate({ jobID }, { deleted: true });
+    const job = await db.Job.findOneAndUpdate({ jobID }, { deleted: true }, { new: true });
     ApiResponse.result(res, job);
   } catch (e) {
     ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
