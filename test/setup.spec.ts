@@ -6,8 +6,17 @@ before((done) => {
   makeConnection(uri).then(() => done());
 });
 
-after((done) => {
-  makeConnection(uri).then((db) => {
-    db.connection.db.dropDatabase(() => done());
-  });
+after(async () => {
+  const db = await makeConnection(uri);
+  await db.connection.db.dropDatabase();
+  await db.connection.close();
+  await db.disconnect();
+
+  // makeConnection(uri).then((db) => {
+  //   db.connection.db.dropDatabase(() => {
+  //     db.connection.close().then(() => {
+  //       db.disconnect().then(() => done());
+  //     });
+  //   });
+  // });
 });

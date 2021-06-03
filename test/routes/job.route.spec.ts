@@ -22,12 +22,38 @@ describe('Test /jobs routes', () => {
     const response = await request(app).post('/jobs').send(testJob);
 
     expect(response.body.success).to.be.true;
-    expect(response.body.data.location.line1).to.equal('49 Test St');
+    expect(response.body.data.location).to.deep.equal(testJob.location);
   });
 
   it('GET /jobs success = true', async () => {
     const response = await request(app).get('/jobs');
 
     expect(response.body.success).to.be.true;
+  });
+
+  it('GET /jobs/1 success = true', async () => {
+    const response = await request(app).get('/jobs/1');
+
+    expect(response.body.success).to.be.true;
+    expect(response.body.data.location).to.deep.equal(testJob.location);
+  });
+
+  it('PATCH /jobs/1 success = true', async () => {
+    const newLoc = {
+      location: {
+        line1: '21 Test St',
+      },
+    };
+    const response = await request(app).patch('/jobs/1').send(newLoc);
+
+    expect(response.body.success).to.be.true;
+    expect(response.body.data.location).to.deep.equal(newLoc.location);
+  });
+
+  it('DELETE /jobs/1 success = true', async () => {
+    const response = await request(app).delete('/jobs/1');
+
+    expect(response.body.success).to.be.true;
+    expect(response.body.data.deleted).to.be.true;
   });
 });
