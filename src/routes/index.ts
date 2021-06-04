@@ -6,11 +6,11 @@ import path from 'path';
 
 const router = Router();
 
-router.use('/users', userRoutes);
+router.use('/api/users', userRoutes);
 
-router.use('/clients', clientRoutes);
+router.use('/api/clients', clientRoutes);
 
-router.use('/jobs', jobRoutes);
+router.use('/api/jobs', jobRoutes);
 
 if (process.env.NODE_ENV === 'production') {
   router.get('*', (req, res) => {
