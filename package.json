@@ -4,9 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=dev nodemon -r tsconfig-paths/register src/app.ts",
-    "build": "tsc --noImplicitAny",
-    "prod": "node ./dist/app.js",
+    "start": "if-env NODE_ENV=production && yarn start:prod || yarn start:dev",
+    "start:prod": "NODE_ENV=production node ./dist/src/app.js",
+    "start:dev": "NODE_ENV=dev concurrently \"nodemon -r tsconfig-paths/register 'src/app.ts' --ignore 'src/client/*'\" \"yarn client\"",
+    "client": "cd src/client && yarn start",
+    "build": "rm -rf dist/ && tsc --noImplicitAny && cd src/client && yarn build",
+    "install": "cd src/client && yarn",
     "test": "NODE_ENV=test mocha --check-leaks -r tsconfig-paths/register -r ts-node/register \"test/**/*.spec.ts\"",
     "lint": "eslint src/**/*.ts",
     "format": "eslint src/**/*.ts --fix"
@@ -16,6 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "http-status-codes": "^2.1.4",
     "mongoose": "^5.12.12",
@@ -24,6 +28,7 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/chai": "^4.2.18",
+    "@types/cors": "^2.8.10",
     "@types/express": "^4.17.12",
     "@types/mocha": "^8.2.2",
     "@types/node": "^15.6.1",

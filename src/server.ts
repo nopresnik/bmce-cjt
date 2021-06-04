@@ -1,14 +1,21 @@
+import cors from 'cors';
 import express, { Application } from 'express';
 import routes from './routes';
+import path from 'path';
 
 function createServer(): Application {
   const app: Application = express();
 
+  app.use(cors());
+  app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
-  app.use(routes);
+  if (process.env.NODE_ENV === 'production') {
+    // app.use(express.static('client'));
+    app.use(express.static(path.join(__dirname, './client')));
+  }
 
-  app.get('/', (req, res) => res.send('Hello world'));
+  app.use(routes);
 
   return app;
 }
