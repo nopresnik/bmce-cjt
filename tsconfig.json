@@ -9,7 +9,9 @@
     "baseUrl": "./src",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": ["./src/**/*.ts", "./test/**/*.spec.ts"],
   "exclude": ["./dist", "./node_modules", "./src/client"]
