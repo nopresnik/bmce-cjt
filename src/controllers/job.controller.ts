@@ -14,7 +14,11 @@ const createJob: IController = async (req, res) => {
 
 const getAllJobs: IController = async (req, res) => {
   try {
-    const jobs = await db.Job.find({}).populate('client');
+    let status = {};
+    if (req.params.status) {
+      status = { status: req.params.status.toUpperCase() };
+    }
+    const jobs = await db.Job.find(status).populate('client');
     ApiResponse.result(res, jobs);
   } catch (e) {
     ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);

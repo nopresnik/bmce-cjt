@@ -7,6 +7,8 @@ router.post('/', controller.createJob);
 
 router.get('/', controller.getAllJobs);
 
+router.get('/s/:status', controller.getAllJobs);
+
 router.get('/:jobID', controller.getJobById);
 
 router.patch('/:jobID', controller.patchJob);
