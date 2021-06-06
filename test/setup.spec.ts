@@ -1,22 +1,11 @@
-import makeConnection from 'models/connection';
+import * as db from 'database';
 
 const uri = 'mongodb://localhost/bmcjt-test';
 
-before((done) => {
-  makeConnection(uri).then(() => done());
+before(async () => {
+  await db.connect(uri);
 });
 
 after(async () => {
-  const db = await makeConnection(uri);
-  await db.connection.db.dropDatabase();
-  await db.connection.close();
   await db.disconnect();
-
-  // makeConnection(uri).then((db) => {
-  //   db.connection.db.dropDatabase(() => {
-  //     db.connection.close().then(() => {
-  //       db.disconnect().then(() => done());
-  //     });
-  //   });
-  // });
 });
