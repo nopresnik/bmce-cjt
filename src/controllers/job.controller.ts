@@ -18,7 +18,7 @@ const getAllJobs: IController = async (req, res) => {
     if (req.params.status) {
       status = { status: req.params.status.toUpperCase() };
     }
-    const jobs = await db.Job.find(status).populate('client');
+    const jobs = await db.Job.find(status).sort({ _id: -1 }).populate('client');
     ApiResponse.result(res, jobs);
   } catch (e) {
     ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
@@ -27,7 +27,7 @@ const getAllJobs: IController = async (req, res) => {
 
 const getJobById: IController = async (req, res) => {
   try {
-    const job = await db.Job.findOne({ jobID: parseInt(req.params.jobID) });
+    const job = await db.Job.findOne({ jobID: parseInt(req.params.jobID) }).populate('client');
 
     if (job) {
       return ApiResponse.result(res, job);
