@@ -1,8 +1,9 @@
 import { Router } from 'express';
+import path from 'path';
 import clientRoutes from './client.route';
 import jobRoutes from './job.route';
+import statsRoutes from './stats.route';
 import userRoutes from './user.route';
-import path from 'path';
 
 const router = Router();
 
@@ -11,6 +12,8 @@ router.use('/api/users', userRoutes);
 router.use('/api/clients', clientRoutes);
 
 router.use('/api/jobs', jobRoutes);
+
+router.use('/api/stats', statsRoutes);
 
 if (process.env.NODE_ENV === 'production') {
   router.get('*', (req, res) => {
