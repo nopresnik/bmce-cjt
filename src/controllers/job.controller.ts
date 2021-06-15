@@ -53,8 +53,20 @@ const getUnpaidJobs: IController = async (req, res) => {
 
 const getInvoicingJobs: IController = async (req, res) => {
   try {
-    const find = { invoiced: false, status: JobStatus.Completed };
-    const jobs = await db.Job.find(find).sort({ _id: -1 }).populate('client');
+    const aggregate = [
+      { $match: { invoiced: false, status: JobStatus.Completed } },
+      {
+        $lookup: {
+          from: 'clients',
+          localField: 'client',
+          foreignField: '_id',
+          as: 'client',
+        },
+      },
+      { $unwind: '$client' },
+      { $addFields: { totalPrice: { $sum: '$pricing.price' } } },
+    ];
+    const jobs = await db.Job.aggregate(aggregate).sort({ _id: -1 });
     ApiResponse.result(res, jobs);
   } catch (e) {
     ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
