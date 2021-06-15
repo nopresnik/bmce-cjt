@@ -7,6 +7,10 @@ router.post('/', controller.createJob);
 
 router.get('/', controller.getAllJobs);
 
+router.get('/s/invoicing', controller.getInvoicingJobs);
+
+router.get('/s/unpaid', controller.getUnpaidJobs);
+
 router.get('/s/:status', controller.getAllJobs);
 
 router.get('/:jobID', controller.getJobById);

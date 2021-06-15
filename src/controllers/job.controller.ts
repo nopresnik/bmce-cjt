@@ -18,17 +18,43 @@ const getAllJobs: IController = async (req, res) => {
     let status = {};
     if (req.params.status) {
       switch (req.params.status.toLowerCase()) {
-        case 'invoicing':
-          status = { invoiced: false, status: JobStatus.Completed };
-          break;
-        case 'unpaid':
-          status = { invoiced: true, invoicePaid: false };
-          break;
         default:
           status = { status: req.params.status.toUpperCase() };
       }
     }
     const jobs = await db.Job.find(status).sort({ _id: -1 }).populate('client');
+    ApiResponse.result(res, jobs);
+  } catch (e) {
+    ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
+  }
+};
+
+const getUnpaidJobs: IController = async (req, res) => {
+  try {
+    const aggregate = [
+      { $match: { invoiced: true, invoicePaid: false } },
+      {
+        $lookup: {
+          from: 'clients',
+          localField: 'client',
+          foreignField: '_id',
+          as: 'client',
+        },
+      },
+      { $unwind: '$client' },
+      { $addFields: { totalPrice: { $sum: '$pricing.price' } } },
+    ];
+    const jobs = await db.Job.aggregate(aggregate).sort({ _id: -1 });
+    ApiResponse.result(res, jobs);
+  } catch (e) {
+    ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
+  }
+};
+
+const getInvoicingJobs: IController = async (req, res) => {
+  try {
+    const find = { invoiced: false, status: JobStatus.Completed };
+    const jobs = await db.Job.find(find).sort({ _id: -1 }).populate('client');
     ApiResponse.result(res, jobs);
   } catch (e) {
     ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
@@ -68,4 +94,4 @@ const deleteJob: IController = async (req, res) => {
   }
 };
 
-export default { createJob, getAllJobs, getJobById, patchJob, deleteJob };
+export default { createJob, getAllJobs, getInvoicingJobs, getUnpaidJobs, getJobById, patchJob, deleteJob };
