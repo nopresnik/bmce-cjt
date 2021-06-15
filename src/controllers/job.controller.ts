@@ -16,7 +16,16 @@ const getAllJobs: IController = async (req, res) => {
   try {
     let status = {};
     if (req.params.status) {
-      status = { status: req.params.status.toUpperCase() };
+      switch (req.params.status.toLowerCase()) {
+        case 'invoicing':
+          status = { invoiced: false };
+          break;
+        case 'unpaid':
+          status = { invoicePaid: false };
+          break;
+        default:
+          status = { status: req.params.status.toUpperCase() };
+      }
     }
     const jobs = await db.Job.find(status).sort({ _id: -1 }).populate('client');
     ApiResponse.result(res, jobs);
