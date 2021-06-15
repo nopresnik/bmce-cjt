@@ -1,4 +1,5 @@
 import code from 'http-status-codes';
+import JobStatus from 'types/IJobStatus';
 import db from '../models';
 import IController from '../types/IController';
 import ApiResponse from '../utilities/apiResponse';
@@ -18,10 +19,10 @@ const getAllJobs: IController = async (req, res) => {
     if (req.params.status) {
       switch (req.params.status.toLowerCase()) {
         case 'invoicing':
-          status = { invoiced: false };
+          status = { invoiced: false, status: JobStatus.Completed };
           break;
         case 'unpaid':
-          status = { invoicePaid: false };
+          status = { invoiced: true, invoicePaid: false };
           break;
         default:
           status = { status: req.params.status.toUpperCase() };
