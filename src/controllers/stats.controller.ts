@@ -1,7 +1,7 @@
 import code from 'http-status-codes';
-import IController from 'types/IController';
-import Stats from 'types/IStats';
-import ApiResponse from 'utilities/apiResponse';
+import IController from '../types/IController';
+import Stats from '../types/IStats';
+import ApiResponse from '../utilities/apiResponse';
 
 const getStats: IController = async (req, res) => {
   const statsObject: Stats = {

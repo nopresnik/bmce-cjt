@@ -1,7 +1,7 @@
 import code from 'http-status-codes';
-import IController from 'types/IController';
-import ApiResponse from 'utilities/apiResponse';
 import db from '../models';
+import IController from '../types/IController';
+import ApiResponse from '../utilities/apiResponse';
 
 const createCategory: IController = async (req, res) => {
   try {

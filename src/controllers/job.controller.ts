@@ -1,7 +1,7 @@
 import code from 'http-status-codes';
-import JobStatus from 'types/IJobStatus';
 import db from '../models';
 import IController from '../types/IController';
+import JobStatus from '../types/IJobStatus';
 import ApiResponse from '../utilities/apiResponse';
 
 const createJob: IController = async (req, res) => {

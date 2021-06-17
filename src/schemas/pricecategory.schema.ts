@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-import PriceCategory from 'types/IPriceCategory';
+import PriceCategory from '../types/IPriceCategory';
 
 const schema = new Schema<PriceCategory>(
   {
