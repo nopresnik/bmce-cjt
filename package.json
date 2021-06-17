@@ -6,10 +6,9 @@
   "scripts": {
     "start": "if-env NODE_ENV=production && yarn start:prod || yarn start:dev",
     "start:prod": "NODE_ENV=production node ./dist/src/app.js",
-    "start:dev": "NODE_ENV=dev concurrently \"nodemon -r tsconfig-paths/register 'src/app.ts' --ignore 'src/client/*'\" \"yarn client\"",
+    "start:dev": "NODE_ENV=dev nodemon -r tsconfig-paths/register 'src/app.ts' --ignore 'src/client/*'",
     "client": "cd src/client && yarn start",
-    "build": "rm -rf dist/ && tsc --noImplicitAny && cd src/client && yarn build",
-    "install": "cd src/client && yarn",
+    "build": "rm -rf dist/ && tsc --noImplicitAny",
     "test": "NODE_ENV=test mocha --check-leaks -r tsconfig-paths/register -r ts-node/register \"test/**/*.spec.ts\"",
     "test-coverage": "NODE_ENV=test nyc mocha --check-leaks -r tsconfig-paths/register -r ts-node/register \"test/**/*.spec.ts\"",
     "lint": "eslint src/**/*.ts",

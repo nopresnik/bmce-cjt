@@ -2,6 +2,7 @@ import { Router } from 'express';
 import path from 'path';
 import clientRoutes from './client.route';
 import jobRoutes from './job.route';
+import priceCategoriesRoutes from './pricecategory.route';
 import statsRoutes from './stats.route';
 import userRoutes from './user.route';
 
@@ -14,6 +15,8 @@ router.use('/api/clients', clientRoutes);
 router.use('/api/jobs', jobRoutes);
 
 router.use('/api/stats', statsRoutes);
+
+router.use('/api/pricecategories', priceCategoriesRoutes);
 
 if (process.env.NODE_ENV === 'production') {
   router.get('*', (req, res) => {
