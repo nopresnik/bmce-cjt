@@ -7,7 +7,7 @@ import statsRoutes from './stats.route';
 
 const router = Router();
 
-router.use('/api/users', userRoutess);
+router.use('/api/users', userRoutes);
 
 router.use('/api/clients', clientRoutes);
 
