@@ -1,5 +1,6 @@
 import code from 'http-status-codes';
 import db from '../models';
+import sockets from '../services/socket.service';
 import IController from '../types/IController';
 import ApiResponse from '../utilities/apiResponse';
 
@@ -37,6 +38,7 @@ const getClientByID: IController = async (req, res) => {
 const patchClient: IController = async (req, res) => {
   const _id = req.params.clientID;
   try {
+    sockets.emit('client:patch', req.body);
     const client = await db.Client.findOneAndUpdate({ _id }, req.body, { new: true, runValidators: true });
     return ApiResponse.result(res, client);
   } catch (e) {
