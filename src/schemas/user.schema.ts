@@ -5,6 +5,7 @@ import User from '../types/IUser';
 const schema = new Schema<User>(
   {
     name: { type: String, required: true },
+    initials: { type: String },
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true },
   },
@@ -20,6 +21,12 @@ schema.pre('save', function (next) {
       next();
     });
   });
+
+  if (!this.initials) {
+    const name = this.name.split(' ');
+    const initials = name.shift().charAt(0) + name.pop().charAt(0);
+    this.initials = initials;
+  }
 });
 
 export default schema;
