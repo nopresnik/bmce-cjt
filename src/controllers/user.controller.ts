@@ -1,11 +1,11 @@
-import ApiResponse from '../utilities/apiResponse';
+import code from 'http-status-codes';
 import db from '../models';
 import IController from '../types/IController';
-import code from 'http-status-codes';
+import ApiResponse from '../utilities/apiResponse';
 
 const getAllUsers: IController = async (req, res) => {
   try {
-    const users = await db.User.find({});
+    const users = await db.User.find({}).sort({ initials: 1 });
     ApiResponse.result(res, users);
   } catch (e) {
     ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
