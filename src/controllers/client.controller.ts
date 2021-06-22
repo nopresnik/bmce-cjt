@@ -14,7 +14,7 @@ const createClient: IController = async (req, res) => {
 
 const getAllClients: IController = async (req, res) => {
   try {
-    const clients = await db.Client.find({});
+    const clients = await db.Client.find({}).sort({ name: 1 });
     ApiResponse.result(res, clients);
   } catch (e) {
     ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
