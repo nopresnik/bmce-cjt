@@ -33,8 +33,8 @@ const FOLDERS = [
 ];
 
 const folderRangeString = (jobID: number, rounding: number) => {
-  let lower = Math.round(jobID / rounding) * rounding;
-  let upper = Math.round(jobID / rounding) * rounding + rounding;
+  let lower = Math.floor(jobID / rounding) * rounding;
+  let upper = Math.floor(jobID / rounding) * rounding + rounding;
 
   if (jobID === lower) {
     lower -= rounding;
