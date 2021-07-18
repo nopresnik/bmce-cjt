@@ -1,5 +1,6 @@
 import fs from 'fs';
 import Job from 'types/IJob';
+import db from '../models';
 
 const NETWORK_LOCATION = process.env.NETWORK_LOCATION || '/Users/nopresnik/JOBS/';
 
@@ -45,8 +46,10 @@ const folderRangeString = (jobID: number, rounding: number) => {
   return lower + ' - ' + upper;
 };
 
-const makeJobFolder = (job: Job): void => {
-  const buildName = `${job.jobID} ${job.client} ${job.location.line1 || ''} ${job.location.line2 || ''} ${
+const makeJobFolder = async (job: Job): Promise<void> => {
+  const client = await db.Client.findOne({ _id: job.client });
+
+  const buildName = `${job.jobID} ${client?.name} ${job.location.line1 || ''} ${job.location.line2 || ''} ${
     job.location.city || ''
   } ${job.location.state || ''} ${job.location.postcode || ''}`;
 
