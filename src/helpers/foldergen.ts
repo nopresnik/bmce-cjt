@@ -46,9 +46,12 @@ const folderRangeString = (jobID: number, rounding: number) => {
 };
 
 const makeJobFolder = (job: Job): void => {
-  const jobFolder =
-    NETWORK_LOCATION + `${folderRangeString(job.jobID, 1000)}/${job.jobID} ${job.client} ${job.location.city}/`;
-  console.log(jobFolder);
+  const buildName = `${job.jobID} ${job.client} ${job.location.line1 || ''} ${job.location.line2 || ''} ${
+    job.location.city || ''
+  } ${job.location.state || ''} ${job.location.postcode || ''}`;
+
+  const jobFolder = NETWORK_LOCATION + `${folderRangeString(job.jobID, 1000)}/${buildName}/`;
+
   if (!fs.existsSync(jobFolder)) {
     FOLDERS.forEach((folder) => {
       fs.mkdirSync(jobFolder + folder, { recursive: true });
