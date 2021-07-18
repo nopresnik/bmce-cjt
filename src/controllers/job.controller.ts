@@ -22,7 +22,9 @@ const getAllJobs: IController = async (req, res) => {
           status = { status: req.params.status.toUpperCase() };
       }
     }
-    const jobs = await db.Job.find(status).sort({ _id: -1 }).populate('client');
+    const jobs = await db.Job.find({ ...status, deleted: false })
+      .sort({ _id: -1 })
+      .populate('client');
     ApiResponse.result(res, jobs);
   } catch (e) {
     ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
@@ -32,7 +34,7 @@ const getAllJobs: IController = async (req, res) => {
 const getUnpaidJobs: IController = async (req, res) => {
   try {
     const aggregate = [
-      { $match: { invoiced: true, invoicePaid: false } },
+      { $match: { invoiced: true, invoicePaid: false, deleted: false } },
       {
         $lookup: {
           from: 'clients',
@@ -54,7 +56,7 @@ const getUnpaidJobs: IController = async (req, res) => {
 const getInvoicingJobs: IController = async (req, res) => {
   try {
     const aggregate = [
-      { $match: { invoiced: false, status: JobStatus.Completed } },
+      { $match: { invoiced: false, status: JobStatus.Completed, deleted: false } },
       {
         $lookup: {
           from: 'clients',
