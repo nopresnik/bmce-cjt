@@ -1,4 +1,6 @@
 import code from 'http-status-codes';
+import JobStatus from 'types/IJobStatus';
+import db from '../models';
 import IController from '../types/IController';
 import Stats from '../types/IStats';
 import ApiResponse from '../utilities/apiResponse';
@@ -14,12 +16,33 @@ const getStats: IController = async (req, res) => {
   };
 
   try {
-    statsObject.active = 5;
-    statsObject.hold = 6;
-    statsObject.awaitingInvoicing = 7;
-    statsObject.unpaid = 8;
-    statsObject.month = 9;
-    statsObject.year = 10;
+    const date = new Date();
+
+    statsObject.active = await db.Job.countDocuments({ status: JobStatus.Active });
+
+    statsObject.hold = await db.Job.countDocuments({ status: JobStatus.Hold });
+
+    statsObject.awaitingInvoicing = await db.Job.countDocuments({
+      status: JobStatus.Completed,
+      invoiced: false,
+      invoicePaid: false,
+    });
+
+    statsObject.unpaid = await db.Job.countDocuments({ invoiced: true, invoicePaid: false });
+
+    statsObject.month = await db.Job.countDocuments({
+      date: {
+        $gte: new Date(date.getFullYear(), date.getMonth(), 1),
+        $lt: new Date(date.getFullYear(), date.getMonth() + 1, 0),
+      },
+    });
+
+    statsObject.year = await db.Job.countDocuments({
+      date: {
+        $gte: new Date(date.getFullYear(), 0, 1),
+        $lt: new Date(date.getFullYear() + 1, 0, 1),
+      },
+    });
 
     ApiResponse.result(res, statsObject);
   } catch (e) {
