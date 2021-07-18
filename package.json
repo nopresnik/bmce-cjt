@@ -25,6 +25,7 @@
     "mongoose": "^5.12.12",
     "prettier": "^2.3.0",
     "pusher": "^5.0.0",
+    "shelljs": "^0.8.4",
     "tsyringe": "^4.5.0"
   },
   "devDependencies": {

@@ -1,3 +1,4 @@
+import foldergen from 'helpers/foldergen';
 import pusher from 'helpers/pusher';
 import code from 'http-status-codes';
 import db from '../models';
@@ -8,6 +9,7 @@ import ApiResponse from '../utilities/apiResponse';
 const createJob: IController = async (req, res) => {
   try {
     const job = await db.Job.create(req.body);
+    foldergen.makeJobFolder(job);
     pusher.sendMsg('jobs', 'update_job', JSON.stringify(job));
     ApiResponse.result(res, job);
   } catch (e) {
