@@ -108,4 +108,14 @@ const deleteJob: IController = async (req, res) => {
   }
 };
 
-export default { createJob, getAllJobs, getInvoicingJobs, getUnpaidJobs, getJobById, patchJob, deleteJob };
+const recoverJob: IController = async (req, res) => {
+  const jobID = parseInt(req.params.jobID);
+  try {
+    const job = await db.Job.findOneAndUpdate({ jobID }, { deleted: false }, { new: true });
+    ApiResponse.result(res, job);
+  } catch (e) {
+    ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
+  }
+};
+
+export default { createJob, getAllJobs, getInvoicingJobs, getUnpaidJobs, getJobById, patchJob, deleteJob, recoverJob };

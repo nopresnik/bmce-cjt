@@ -19,4 +19,6 @@ router.patch('/:jobID', controller.patchJob);
 
 router.delete('/:jobID', controller.deleteJob);
 
+router.post('/recover/:jobID', controller.recoverJob);
+
 export default router;
