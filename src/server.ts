@@ -1,7 +1,7 @@
 import cors from 'cors';
 import express, { Application } from 'express';
-import routes from './routes';
 import path from 'path';
+import routes from './routes';
 
 function createServer(): Application {
   const app: Application = express();

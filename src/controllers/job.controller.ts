@@ -1,3 +1,4 @@
+import pusher from 'helpers/pusher';
 import code from 'http-status-codes';
 import db from '../models';
 import IController from '../types/IController';
@@ -7,6 +8,7 @@ import ApiResponse from '../utilities/apiResponse';
 const createJob: IController = async (req, res) => {
   try {
     const job = await db.Job.create(req.body);
+    pusher.sendMsg('jobs', 'create_job', JSON.stringify(job));
     ApiResponse.result(res, job);
   } catch (e) {
     ApiResponse.error(res, code.BAD_REQUEST, e);
@@ -92,6 +94,7 @@ const patchJob: IController = async (req, res) => {
   const jobID = parseInt(req.params.jobID);
   try {
     const job = await db.Job.findOneAndUpdate({ jobID }, req.body, { new: true, runValidators: true });
+    pusher.sendMsg('jobs', 'update_job', JSON.stringify(job));
     return ApiResponse.result(res, job);
   } catch (e) {
     ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
@@ -102,6 +105,7 @@ const deleteJob: IController = async (req, res) => {
   const jobID = parseInt(req.params.jobID);
   try {
     const job = await db.Job.findOneAndUpdate({ jobID }, { deleted: true }, { new: true });
+    pusher.sendMsg('jobs', 'delete_job', JSON.stringify(job));
     ApiResponse.result(res, job);
   } catch (e) {
     ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
@@ -112,6 +116,7 @@ const recoverJob: IController = async (req, res) => {
   const jobID = parseInt(req.params.jobID);
   try {
     const job = await db.Job.findOneAndUpdate({ jobID }, { deleted: false }, { new: true });
+    pusher.sendMsg('jobs', 'recover_job', JSON.stringify(job));
     ApiResponse.result(res, job);
   } catch (e) {
     ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
