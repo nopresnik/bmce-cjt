@@ -51,13 +51,13 @@ const makeJobFolder = async (job: Job): Promise<void> => {
 
   const buildName = `${job.jobID} ${client?.name} ${job.location.line1 || ''} ${job.location.line2 || ''} ${
     job.location.city || ''
-  } ${job.location.state || ''} ${job.location.postcode || ''}`;
+  } ${job.location.state || ''} ${job.location.postcode || ''}`.trim();
 
-  const jobFolder = NETWORK_LOCATION + `${folderRangeString(job.jobID, 1000)}/${buildName}/`;
+  const jobFolder = NETWORK_LOCATION + `${folderRangeString(job.jobID, 1000)}/${buildName}/`.trim();
 
   if (!fs.existsSync(jobFolder)) {
     FOLDERS.forEach((folder) => {
-      fs.mkdirSync(jobFolder + folder, { recursive: true });
+      fs.mkdirSync(jobFolder.trim() + folder, { recursive: true });
     });
   }
 };
