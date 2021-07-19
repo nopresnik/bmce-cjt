@@ -2,7 +2,7 @@ import fs from 'fs';
 import Job from 'types/IJob';
 import db from '../models';
 
-const NETWORK_LOCATION = process.env.NETWORK_LOCATION || '/Users/nopresnik/JOBS/';
+const NETWORK_LOCATION = process.env.BMCJT_NETWORK_LOCATION || '/Users/nopresnik/JOBS/';
 
 const FOLDERS = [
   '01. Current Files/Received',

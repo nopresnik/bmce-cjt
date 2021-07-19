@@ -1,10 +1,10 @@
 import Pusher from 'pusher';
 
 const pusher = new Pusher({
-  appId: '1064673',
-  key: '6814256d3829ff3d95fa',
-  secret: '2c412c63a02d43f5596f',
-  cluster: 'ap4',
+  appId: process.env.BMCJT_PUSHER_APP || '',
+  key: process.env.BMCJT_PUSHER_KEY || '',
+  secret: process.env.BMCJT_PUSHER_SECRET || '',
+  cluster: process.env.BMCJT_PUSHER_CLUSTER || '',
   useTLS: true,
 });
 
