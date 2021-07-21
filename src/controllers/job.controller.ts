@@ -9,8 +9,13 @@ import ApiResponse from '../utilities/apiResponse';
 const createJob: IController = async (req, res) => {
   try {
     const job = await db.Job.create(req.body);
-    foldergen.makeJobFolder(job);
+
+    if (!job.previousRefs.length) {
+      foldergen.makeJobFolder(job);
+    }
+
     pusher.sendMsg('jobs', 'update_job', JSON.stringify(job));
+
     ApiResponse.result(res, job);
   } catch (e) {
     ApiResponse.error(res, code.BAD_REQUEST, e);
