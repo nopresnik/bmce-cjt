@@ -39,13 +39,15 @@ const getStats: IController = async (req, res) => {
       deleted: false,
     });
 
-    statsObject.year = await db.Job.countDocuments({
-      date: {
-        $gte: new Date(date.getFullYear(), 0, 1),
-        $lt: new Date(date.getFullYear() + 1, 0, 1),
-      },
-      deleted: false,
-    });
+    // statsObject.year = await db.Job.countDocuments({
+    //   date: {
+    //     $gte: new Date(date.getFullYear(), 0, 1),
+    //     $lt: new Date(date.getFullYear() + 1, 0, 1),
+    //   },
+    //   deleted: false,
+    // });
+
+    statsObject.year = 55;
 
     ApiResponse.result(res, statsObject);
   } catch (e) {

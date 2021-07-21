@@ -2,15 +2,16 @@ FROM node:14
 
 WORKDIR /app
 
-COPY package.json ./
+COPY package.json /app
 
-RUN npm install
+RUN yarn
 
-ADD . .
+COPY . /app
 
-RUN npm run build
+RUN yarn build
 
 ENV NODE_ENV production
+ENV MONGO_URI "mongodb://host.docker.internal/bmcjt"
 ENV PORT 8080
 
 CMD ["npm", "start"]
