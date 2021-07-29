@@ -7,7 +7,7 @@ const getNextJobID = (): Promise<number> => {
       .sort({ $natural: -1 })
       .then((result) => {
         if (result.length) {
-          const nextID = result[0]['jobID'] + 1;
+          const nextID = Math.floor(result[0]['jobID'] + 1);
           resolve(nextID);
         }
 
