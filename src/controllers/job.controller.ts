@@ -8,9 +8,19 @@ import ApiResponse from '../utilities/apiResponse';
 
 const createJob: IController = async (req, res) => {
   try {
+    const prevRef = req.body.previousRefs && req.body.previousRefs.length ? req.body.previousRefs[0] : undefined;
+
+    // If a previous reference exists: Set the jobID to the previousRef jobID+0.n
+    // n = number of jobs using the same jobID.
+    if (prevRef) {
+      // Count jobs between prevRef.0 and prevRef.0 + 1
+      const prevJobs = await db.Job.countDocuments({ jobID: { $gte: prevRef, $lt: prevRef + 1 } });
+      req.body.jobID = prevRef + prevJobs * 0.1;
+    }
+
     const job = await db.Job.create(req.body);
 
-    if (!job.previousRefs.length) {
+    if (!prevRef) {
       foldergen.makeJobFolder(job);
     }
 
