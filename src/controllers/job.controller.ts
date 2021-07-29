@@ -86,7 +86,7 @@ const getInvoicingJobs: IController = async (req, res) => {
 
 const getJobById: IController = async (req, res) => {
   try {
-    const job = await db.Job.findOne({ jobID: parseInt(req.params.jobID) }).populate('client');
+    const job = await db.Job.findOne({ jobID: parseFloat(req.params.jobID) }).populate('client');
 
     if (job) {
       return ApiResponse.result(res, job);
@@ -98,7 +98,7 @@ const getJobById: IController = async (req, res) => {
 };
 
 const patchJob: IController = async (req, res) => {
-  const jobID = parseInt(req.params.jobID);
+  const jobID = parseFloat(req.params.jobID);
   try {
     const job = await db.Job.findOneAndUpdate({ jobID }, req.body, { new: true, runValidators: true });
     pusher.sendMsg('jobs', 'update_job', JSON.stringify(job));
@@ -109,7 +109,7 @@ const patchJob: IController = async (req, res) => {
 };
 
 const deleteJob: IController = async (req, res) => {
-  const jobID = parseInt(req.params.jobID);
+  const jobID = parseFloat(req.params.jobID);
   try {
     const job = await db.Job.findOneAndUpdate({ jobID }, { deleted: true }, { new: true });
     pusher.sendMsg('jobs', 'update_job', JSON.stringify(job));
@@ -120,7 +120,7 @@ const deleteJob: IController = async (req, res) => {
 };
 
 const recoverJob: IController = async (req, res) => {
-  const jobID = parseInt(req.params.jobID);
+  const jobID = parseFloat(req.params.jobID);
   try {
     const job = await db.Job.findOneAndUpdate({ jobID }, { deleted: false }, { new: true });
     pusher.sendMsg('jobs', 'update_job', JSON.stringify(job));
