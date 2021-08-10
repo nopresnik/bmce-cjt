@@ -9,9 +9,11 @@ const pusher = new Pusher({
 });
 
 const sendMsg = (channel: string, event: string, message?: string): void => {
-  pusher.trigger(channel, event, {
-    message,
-  });
+  if (process.env.NODE_ENV === 'production') {
+    pusher.trigger(channel, event, {
+      message,
+    });
+  }
 };
 
 export default { sendMsg };

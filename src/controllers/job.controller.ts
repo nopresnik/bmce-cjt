@@ -8,9 +8,19 @@ import ApiResponse from '../utilities/apiResponse';
 
 const createJob: IController = async (req, res) => {
   try {
+    const prevRef = req.body.previousRefs && req.body.previousRefs.length ? req.body.previousRefs[0] : undefined;
+
+    // If a previous reference exists: Set the jobID to the previousRef jobID+0.n
+    // n = number of jobs using the same jobID.
+    if (prevRef) {
+      // Count jobs between prevRef.0 and prevRef.0 + 1
+      const prevJobs = await db.Job.countDocuments({ jobID: { $gte: prevRef, $lt: prevRef + 1 } });
+      req.body.jobID = prevRef + prevJobs * 0.1;
+    }
+
     const job = await db.Job.create(req.body);
 
-    if (!job.previousRefs.length) {
+    if (!prevRef) {
       foldergen.makeJobFolder(job);
     }
 
@@ -86,7 +96,7 @@ const getInvoicingJobs: IController = async (req, res) => {
 
 const getJobById: IController = async (req, res) => {
   try {
-    const job = await db.Job.findOne({ jobID: parseInt(req.params.jobID) }).populate('client');
+    const job = await db.Job.findOne({ jobID: parseFloat(req.params.jobID) }).populate('client');
 
     if (job) {
       return ApiResponse.result(res, job);
@@ -98,7 +108,7 @@ const getJobById: IController = async (req, res) => {
 };
 
 const patchJob: IController = async (req, res) => {
-  const jobID = parseInt(req.params.jobID);
+  const jobID = parseFloat(req.params.jobID);
   try {
     const job = await db.Job.findOneAndUpdate({ jobID }, req.body, { new: true, runValidators: true });
     pusher.sendMsg('jobs', 'update_job', JSON.stringify(job));
@@ -109,7 +119,7 @@ const patchJob: IController = async (req, res) => {
 };
 
 const deleteJob: IController = async (req, res) => {
-  const jobID = parseInt(req.params.jobID);
+  const jobID = parseFloat(req.params.jobID);
   try {
     const job = await db.Job.findOneAndUpdate({ jobID }, { deleted: true }, { new: true });
     pusher.sendMsg('jobs', 'update_job', JSON.stringify(job));
@@ -120,7 +130,7 @@ const deleteJob: IController = async (req, res) => {
 };
 
 const recoverJob: IController = async (req, res) => {
-  const jobID = parseInt(req.params.jobID);
+  const jobID = parseFloat(req.params.jobID);
   try {
     const job = await db.Job.findOneAndUpdate({ jobID }, { deleted: false }, { new: true });
     pusher.sendMsg('jobs', 'update_job', JSON.stringify(job));
