@@ -17,8 +17,6 @@ const getStats: IController = async (req, res) => {
   };
 
   try {
-    const date = new Date();
-
     statsObject.active = await db.Job.countDocuments({ status: JobStatus.Active, deleted: false });
 
     statsObject.hold = await db.Job.countDocuments({ status: JobStatus.Hold, deleted: false });
@@ -34,22 +32,23 @@ const getStats: IController = async (req, res) => {
 
     statsObject.month = await db.Job.countDocuments({
       date: {
-        $gte: new DateTime().startOf('month').toJSDate(),
-        $lt: new DateTime().endOf('month').toJSDate(),
+        $gte: DateTime.now().startOf('month').toJSDate(),
+        $lt: DateTime.now().endOf('month').toJSDate(),
       },
       deleted: false,
     });
 
     statsObject.year = await db.Job.countDocuments({
       date: {
-        $gte: new DateTime().startOf('year').toJSDate(),
-        $lt: new DateTime().endOf('year').toJSDate(),
+        $gte: DateTime.now().startOf('year').toJSDate(),
+        $lt: DateTime.now().endOf('year').toJSDate(),
       },
       deleted: false,
     });
 
     ApiResponse.result(res, statsObject);
   } catch (e) {
+    console.log(e);
     ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
   }
 };

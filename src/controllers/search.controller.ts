@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon';
-import db from 'models';
+import db from '../models';
 import { FilterQuery } from 'mongoose';
-import IController from 'types/IController';
-import Job from 'types/IJob';
-import JobStatus from 'types/IJobStatus';
-import ApiResponse from 'utilities/apiResponse';
+import IController from '../types/IController';
+import Job from '../types/IJob';
+import JobStatus from '../types/IJobStatus';
+import ApiResponse from '../utilities/apiResponse';
 
 const searchJobs: IController = async (req, res) => {
   const only = (req.query.only as string)?.split(',');
