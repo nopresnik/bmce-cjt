@@ -9,7 +9,7 @@ import ApiResponse from 'utilities/apiResponse';
 const searchJobs: IController = async (req, res) => {
   const only = (req.query.only as string)?.split(',');
 
-  const { start, end, status, invoiced, invoicePaid } = req.query;
+  const { start, end, status, invoiced, invoicePaid, pricedBy } = req.query;
 
   const query: FilterQuery<Job> = {};
   if (start) {
@@ -28,6 +28,9 @@ const searchJobs: IController = async (req, res) => {
   }
   if (invoicePaid) {
     query.invoicePaid = invoicePaid === 'true';
+  }
+  if (pricedBy) {
+    query['pricing.staff'] = { $all: (pricedBy as string).split(',') };
   }
 
   const jobs = await db.Job.find(query, only).sort({
