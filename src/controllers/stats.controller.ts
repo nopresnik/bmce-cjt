@@ -1,4 +1,5 @@
 import code from 'http-status-codes';
+import { DateTime } from 'luxon';
 import db from '../models';
 import IController from '../types/IController';
 import JobStatus from '../types/IJobStatus';
@@ -33,16 +34,16 @@ const getStats: IController = async (req, res) => {
 
     statsObject.month = await db.Job.countDocuments({
       date: {
-        $gte: new Date(date.getFullYear(), date.getMonth(), 1),
-        $lt: new Date(date.getFullYear(), date.getMonth() + 1, 0),
+        $gte: new DateTime().startOf('month').toJSDate(),
+        $lt: new DateTime().endOf('month').toJSDate(),
       },
       deleted: false,
     });
 
     statsObject.year = await db.Job.countDocuments({
       date: {
-        $gte: new Date(date.getFullYear(), 0, 1),
-        $lt: new Date(date.getFullYear() + 1, 0, 1),
+        $gte: new DateTime().startOf('year').toJSDate(),
+        $lt: new DateTime().endOf('year').toJSDate(),
       },
       deleted: false,
     });

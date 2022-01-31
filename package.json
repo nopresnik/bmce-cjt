@@ -22,7 +22,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "http-status-codes": "^2.1.4",
-    "luxon": "^2.2.0",
+    "luxon": "^2.3.0",
     "mongoose": "^5.12.12",
     "prettier": "^2.3.0",
     "pusher": "^5.0.0",
