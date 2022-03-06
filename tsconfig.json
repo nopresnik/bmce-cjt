@@ -6,7 +6,6 @@
     "rootDirs": ["./src", "./test"],
     "strict": true,
     "moduleResolution": "node",
-    "baseUrl": "./src",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,

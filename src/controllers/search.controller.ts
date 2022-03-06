@@ -8,17 +8,18 @@ import ApiResponse from '../utilities/apiResponse';
 
 const searchJobs: IController = async (req, res) => {
   const only = (req.query.only as string)?.split(',');
-
-  const { start, end, status, invoiced, invoicePaid, pricedBy } = req.query;
+  const { start, end, rangeByCompleted, status, invoiced, invoicePaid, pricedBy } = req.query;
 
   const query: FilterQuery<Job> = {};
   if (start) {
     const date = DateTime.fromISO(start.toString()).startOf('day').toJSDate();
-    query.date = { $gte: date };
+    rangeByCompleted === 'true' ? (query.dateCompleted = { $gte: date }) : (query.date = { $gte: date });
   }
   if (end) {
     const date = DateTime.fromISO(end.toString()).endOf('day').toJSDate();
-    query.date = { ...query.date, $lte: date };
+    rangeByCompleted === 'true'
+      ? (query.dateCompleted = { ...query.dateCompleted, $lte: date })
+      : (query.date = { ...query.date, $lte: date });
   }
   if (status) {
     query.status = status.toString().toUpperCase() as JobStatus;
