@@ -1,8 +1,9 @@
 import db from '../models';
+import JobModel from '../models/job.model';
 
 const getNextJobID = (): Promise<number> => {
   return new Promise((resolve, reject) => {
-    db.Job.find()
+    JobModel.find()
       .limit(1)
       .sort({ jobID: -1 })
       .then((result) => {

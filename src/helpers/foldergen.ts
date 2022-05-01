@@ -48,24 +48,28 @@ const folderRangeString = (jobID: number, rounding: number) => {
 };
 
 const makeJobFolder = async (job: Job): Promise<void> => {
-  const client = await db.Client.findOne({ _id: job.client });
+  try {
+    const client = await db.Client.findOne({ _id: job.client });
 
-  const buildName: (string | number)[] = [];
+    const buildName: (string | number)[] = [];
 
-  buildName.push(job.jobID);
-  if (client?.name) buildName.push(client?.name.trim());
-  if (job.location.line1) buildName.push(job.location.line1.trim());
-  if (job.location.line2) buildName.push(job.location.line2.trim());
-  if (job.location.city) buildName.push(job.location.city.trim());
-  if (job.location.state) buildName.push(job.location.state.trim());
-  if (job.location.postcode) buildName.push(job.location.postcode.trim());
+    buildName.push(job.jobID);
+    if (client?.name) buildName.push(client?.name.trim());
+    if (job.location.line1) buildName.push(job.location.line1.trim());
+    if (job.location.line2) buildName.push(job.location.line2.trim());
+    if (job.location.city) buildName.push(job.location.city.trim());
+    if (job.location.state) buildName.push(job.location.state.trim());
+    if (job.location.postcode) buildName.push(job.location.postcode.trim());
 
-  const jobFolder = path.join(NETWORK_LOCATION + folderRangeString(job.jobID, 1000), buildName.join(' '));
+    const jobFolder = path.join(NETWORK_LOCATION + folderRangeString(job.jobID, 1000), buildName.join(' '));
 
-  if (!fs.existsSync(jobFolder)) {
-    FOLDERS.forEach((folder) => {
-      fs.mkdirSync(path.join(jobFolder, folder), { recursive: true });
-    });
+    if (!fs.existsSync(jobFolder)) {
+      FOLDERS.forEach((folder) => {
+        fs.mkdirSync(path.join(jobFolder, folder), { recursive: true });
+      });
+    }
+  } catch (error) {
+    console.error(error);
   }
 };
 

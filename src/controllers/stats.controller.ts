@@ -1,56 +1,28 @@
+import { Request, Response, Router } from 'express';
 import code from 'http-status-codes';
-import { DateTime } from 'luxon';
-import db from '../models';
-import IController from '../types/IController';
-import JobStatus from '../types/IJobStatus';
-import Stats from '../types/IStats';
+import { autoInjectable } from 'tsyringe';
+import Controller from '../interfaces/controller.interface';
+import StatsService from '../services/stats.service';
 import ApiResponse from '../utilities/apiResponse';
 
-const getStats: IController = async (req, res) => {
-  const statsObject: Stats = {
-    active: 0,
-    hold: 0,
-    awaitingInvoicing: 0,
-    unpaid: 0,
-    month: 0,
-    year: 0,
+@autoInjectable()
+export class StatsController implements Controller {
+  private router = Router();
+
+  constructor(private readonly statsService: StatsService) {}
+
+  public getStats = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const stats = await this.statsService.getStats();
+      ApiResponse.result(res, stats);
+    } catch (e) {
+      ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
+    }
   };
 
-  try {
-    statsObject.active = await db.Job.countDocuments({ status: JobStatus.Active, deleted: false });
+  routes(): Router {
+    this.router.get('/', this.getStats);
 
-    statsObject.hold = await db.Job.countDocuments({ status: JobStatus.Hold, deleted: false });
-
-    statsObject.awaitingInvoicing = await db.Job.countDocuments({
-      status: JobStatus.Completed,
-      invoiced: false,
-      invoicePaid: false,
-      deleted: false,
-    });
-
-    statsObject.unpaid = await db.Job.countDocuments({ invoiced: true, invoicePaid: false, deleted: false });
-
-    statsObject.month = await db.Job.countDocuments({
-      date: {
-        $gte: DateTime.now().startOf('month').toJSDate(),
-        $lt: DateTime.now().endOf('month').toJSDate(),
-      },
-      deleted: false,
-    });
-
-    statsObject.year = await db.Job.countDocuments({
-      date: {
-        $gte: DateTime.now().startOf('year').toJSDate(),
-        $lt: DateTime.now().endOf('year').toJSDate(),
-      },
-      deleted: false,
-    });
-
-    ApiResponse.result(res, statsObject);
-  } catch (e) {
-    console.log(e);
-    ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
+    return this.router;
   }
-};
-
-export default { getStats };
+}

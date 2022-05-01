@@ -1,24 +1,11 @@
-import code from 'http-status-codes';
-import db from '../models';
-import IController from '../types/IController';
-import ApiResponse from '../utilities/apiResponse';
+import { autoInjectable } from 'tsyringe';
+import { PriceCategoryService } from '../services/pricecategory.service';
+import PriceCategory from '../types/IPriceCategory';
+import BaseController from './base.controller';
 
-const createCategory: IController = async (req, res) => {
-  try {
-    const category = await db.PriceCategory.create(req.body);
-    ApiResponse.result(res, category);
-  } catch (e) {
-    ApiResponse.error(res, code.BAD_REQUEST, e);
+@autoInjectable()
+export class PriceCategoryController extends BaseController<PriceCategory> {
+  constructor(priceCategoryService: PriceCategoryService) {
+    super(priceCategoryService);
   }
-};
-
-const getCategories: IController = async (req, res) => {
-  try {
-    const categories = await db.PriceCategory.find({});
-    ApiResponse.result(res, categories);
-  } catch (e) {
-    ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
-  }
-};
-
-export default { createCategory, getCategories };
+}

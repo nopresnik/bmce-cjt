@@ -1,143 +1,109 @@
 import code from 'http-status-codes';
-import foldergen from '../helpers/foldergen';
-import pusher from '../helpers/pusher';
-import db from '../models';
-import IController from '../types/IController';
+import { autoInjectable } from 'tsyringe';
+import { Req, Res } from '../interfaces/req-res.interface';
+import RouteInjection from '../interfaces/route-injection.interface';
+import JobService from '../services/job.service';
+import Job from '../types/IJob';
 import JobStatus from '../types/IJobStatus';
 import ApiResponse from '../utilities/apiResponse';
+import BaseController from './base.controller';
 
-const createJob: IController = async (req, res) => {
-  try {
-    const prevRef = req.body.previousRefs && req.body.previousRefs.length ? req.body.previousRefs[0] : undefined;
+@autoInjectable()
+export class JobController extends BaseController<Job> {
+  constructor(private readonly jobService: JobService) {
+    super(jobService);
+  }
 
-    // If a previous reference exists: Set the jobID to the previousRef jobID+0.n
-    // n = number of jobs using the same jobID.
-    if (prevRef) {
-      // Count jobs between prevRef.0 and prevRef.0 + 1
-      const prevJobs = await db.Job.countDocuments({ jobID: { $gte: prevRef, $lt: prevRef + 1 } });
-      req.body.jobID = prevRef + prevJobs * 0.1;
+  private createJob = async (req: Req, res: Res) => {
+    try {
+      const job = await this.jobService.create(req.body);
+      ApiResponse.result(res, job);
+    } catch (e) {
+      ApiResponse.error(res, code.BAD_REQUEST, e);
     }
+  };
 
-    const job = await db.Job.create(req.body);
-
-    if (!prevRef) {
-      foldergen.makeJobFolder(job);
+  private findOneByJobID = async (req: Req, res: Res) => {
+    try {
+      const job = await this.jobService.findOneByJobID(parseFloat(req.params.id));
+      if (job) return ApiResponse.result(res, job);
+      return ApiResponse.error(res, code.NOT_FOUND);
+    } catch (e) {
+      ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
     }
+  };
 
-    pusher.sendMsg('jobs', 'update_job', JSON.stringify(job));
-
-    ApiResponse.result(res, job);
-  } catch (e) {
-    ApiResponse.error(res, code.BAD_REQUEST, e);
-  }
-};
-
-const getAllJobs: IController = async (req, res) => {
-  try {
-    let status = {};
-    if (req.params.status) {
-      switch (req.params.status.toLowerCase()) {
-        default:
-          status = { status: req.params.status.toUpperCase() };
-      }
+  private findAllByStatus = async (req: Req, res: Res) => {
+    try {
+      const status = req.params.status.toUpperCase() as JobStatus;
+      const jobs = await this.jobService.findAllByStatus(status);
+      if (jobs) return ApiResponse.result(res, jobs);
+      return ApiResponse.error(res, code.NOT_FOUND);
+    } catch (e) {
+      ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
     }
-    const jobs = await db.Job.find({ ...status, deleted: false })
-      .sort({ _id: -1 })
-      .populate('client');
-    ApiResponse.result(res, jobs);
-  } catch (e) {
-    ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
-  }
-};
+  };
 
-const getUnpaidJobs: IController = async (req, res) => {
-  try {
-    const aggregate = [
-      { $match: { invoiced: true, invoicePaid: false, deleted: false } },
-      {
-        $lookup: {
-          from: 'clients',
-          localField: 'client',
-          foreignField: '_id',
-          as: 'client',
-        },
-      },
-      { $unwind: '$client' },
-      { $addFields: { totalPrice: { $sum: '$pricing.price' } } },
-    ];
-    const jobs = await db.Job.aggregate(aggregate).sort({ _id: -1 });
-    ApiResponse.result(res, jobs);
-  } catch (e) {
-    ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
-  }
-};
-
-const getInvoicingJobs: IController = async (req, res) => {
-  try {
-    const aggregate = [
-      { $match: { invoiced: false, status: JobStatus.Completed, deleted: false } },
-      {
-        $lookup: {
-          from: 'clients',
-          localField: 'client',
-          foreignField: '_id',
-          as: 'client',
-        },
-      },
-      { $unwind: '$client' },
-      { $addFields: { totalPrice: { $sum: '$pricing.price' } } },
-    ];
-    const jobs = await db.Job.aggregate(aggregate).sort({ _id: -1 });
-    ApiResponse.result(res, jobs);
-  } catch (e) {
-    ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
-  }
-};
-
-const getJobById: IController = async (req, res) => {
-  try {
-    const job = await db.Job.findOne({ jobID: parseFloat(req.params.jobID) }).populate('client');
-
-    if (job) {
-      return ApiResponse.result(res, job);
+  private findAllUnpaid = async (req: Req, res: Res) => {
+    try {
+      const jobs = await this.jobService.findUnpaid();
+      if (jobs) return ApiResponse.result(res, jobs);
+      return ApiResponse.error(res, code.NOT_FOUND);
+    } catch (e) {
+      ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
     }
-    return ApiResponse.error(res, code.NOT_FOUND);
-  } catch (e) {
-    ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
-  }
-};
+  };
 
-const patchJob: IController = async (req, res) => {
-  const jobID = parseFloat(req.params.jobID);
-  try {
-    const job = await db.Job.findOneAndUpdate({ jobID }, req.body, { new: true, runValidators: true });
-    pusher.sendMsg('jobs', 'update_job', JSON.stringify(job));
-    return ApiResponse.result(res, job);
-  } catch (e) {
-    ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
-  }
-};
+  private findAllAwaitingInvoicing = async (req: Req, res: Res) => {
+    try {
+      const jobs = await this.jobService.findAwaitingInvoicing();
+      if (jobs) return ApiResponse.result(res, jobs);
+      return ApiResponse.error(res, code.NOT_FOUND);
+    } catch (e) {
+      ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
+    }
+  };
 
-const deleteJob: IController = async (req, res) => {
-  const jobID = parseFloat(req.params.jobID);
-  try {
-    const job = await db.Job.findOneAndUpdate({ jobID }, { deleted: true }, { new: true });
-    pusher.sendMsg('jobs', 'update_job', JSON.stringify(job));
-    ApiResponse.result(res, job);
-  } catch (e) {
-    ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
-  }
-};
+  private patchByJobID = async (req: Req, res: Res) => {
+    try {
+      const job = await this.jobService.patchByJobID(parseFloat(req.params.id), req.body);
+      if (job) return ApiResponse.result(res, job);
+      return ApiResponse.error(res, code.NOT_FOUND);
+    } catch (e) {
+      ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
+    }
+  };
 
-const recoverJob: IController = async (req, res) => {
-  const jobID = parseFloat(req.params.jobID);
-  try {
-    const job = await db.Job.findOneAndUpdate({ jobID }, { deleted: false }, { new: true });
-    pusher.sendMsg('jobs', 'update_job', JSON.stringify(job));
-    ApiResponse.result(res, job);
-  } catch (e) {
-    ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
-  }
-};
+  private deleteByJobID = async (req: Req, res: Res) => {
+    try {
+      const job = await this.jobService.deleteJobByID(parseFloat(req.params.id));
+      if (job) return ApiResponse.result(res, job);
+      return ApiResponse.error(res, code.NOT_FOUND);
+    } catch (e) {
+      ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
+    }
+  };
 
-export default { createJob, getAllJobs, getInvoicingJobs, getUnpaidJobs, getJobById, patchJob, deleteJob, recoverJob };
+  private recoverByJobID = async (req: Req, res: Res) => {
+    try {
+      const job = await this.jobService.recoverJobByID(parseFloat(req.params.id));
+      if (job) return ApiResponse.result(res, job);
+      return ApiResponse.error(res, code.NOT_FOUND);
+    } catch (e) {
+      ApiResponse.error(res, code.INTERNAL_SERVER_ERROR, e);
+    }
+  };
+
+  // prettier-ignore
+  public routeInjections: RouteInjection[] = [
+    { method: 'post',   route: '/',            controller: this.createJob },
+    { method: 'get',    route: '/',            controller: this.findAllByStatus },
+    { method: 'get',    route: '/:id',         controller: this.findOneByJobID },
+    { method: 'get',    route: '/s/unpaid',    controller: this.findAllUnpaid },
+    { method: 'get',    route: '/s/invoicing', controller: this.findAllAwaitingInvoicing },
+    { method: 'get',    route: '/s/:status',   controller: this.findAllByStatus },
+    { method: 'patch',  route: '/:id',         controller: this.patchByJobID },
+    { method: 'delete', route: '/:id',         controller: this.deleteByJobID },
+    { method: 'post',   route: '/recover/:id', controller: this.recoverByJobID },
+  ];
+}
